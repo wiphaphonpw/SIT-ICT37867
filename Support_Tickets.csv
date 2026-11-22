@@ -1,0 +1,2 @@
+Ticket_ID,Timestamp,LINE_User_ID,Client_Name,Issue_Summary,Sentiment,Priority,Status
+TKT-001,2026-11-21 10:30,U00000000000000000000000000000000,สมหญิง รักษ์ดี (ตัวอย่าง),เว็บไซต์หลักเข้าไม่ได้ขึ้น Error 500,angry,P1,Open

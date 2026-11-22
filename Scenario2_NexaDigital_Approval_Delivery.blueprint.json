@@ -1,0 +1,281 @@
+{
+    "name": "NexaDigital - Approval & Delivery",
+    "flow": [
+        {
+            "id": 1,
+            "module": "gateway:CustomWebHook",
+            "version": 1,
+            "parameters": {
+                "hook": 0,
+                "maxResults": 1
+            },
+            "mapper": {},
+            "metadata": {
+                "designer": {
+                    "x": 0,
+                    "y": 0,
+                    "name": "Approval Webhook"
+                },
+                "restore": {
+                    "parameters": {
+                        "hook": 0
+                    }
+                }
+            }
+        },
+        {
+            "id": 2,
+            "module": "google-sheets:getSheetContent",
+            "version": 2,
+            "parameters": {
+                "__IMTCONN__": 0
+            },
+            "mapper": {
+                "mode": "map",
+                "spreadsheetId": "<YOUR_SPREADSHEET_ID>",
+                "sheetId": "Leads_Quotations",
+                "range": "A{{1.row}}:K{{1.row}}",
+                "includesHeaders": false,
+                "tableFirstRow": "A1:Z1",
+                "valueRenderOption": "FORMATTED_VALUE",
+                "dateTimeRenderOption": "FORMATTED_STRING"
+            },
+            "metadata": {
+                "designer": {
+                    "x": 300,
+                    "y": 0,
+                    "name": "Get Lead Row"
+                }
+            }
+        },
+        {
+            "id": 3,
+            "module": "builtin:BasicRouter",
+            "version": 1,
+            "parameters": {},
+            "mapper": null,
+            "metadata": {
+                "designer": {
+                    "x": 600,
+                    "y": 0,
+                    "name": "Approve / Reject Router"
+                }
+            },
+            "routes": [
+                {
+                    "flow": [
+                        {
+                            "id": 4,
+                            "module": "google-sheets:updateRow",
+                            "version": 2,
+                            "parameters": {
+                                "__IMTCONN__": 0
+                            },
+                            "filter": {
+                                "name": "Approved",
+                                "conditions": [
+                                    [
+                                        {
+                                            "a": "{{1.action}}",
+                                            "o": "text:equal",
+                                            "b": "approve"
+                                        }
+                                    ]
+                                ]
+                            },
+                            "mapper": {
+                                "mode": "map",
+                                "spreadsheetId": "<YOUR_SPREADSHEET_ID>",
+                                "sheetId": "Leads_Quotations",
+                                "rowNumber": "{{1.row}}",
+                                "tableFirstRow": "A1:Z1",
+                                "valueInputOption": "USER_ENTERED",
+                                "values": {
+                                    "10": "Approved & Sent"
+                                }
+                            },
+                            "metadata": {
+                                "designer": {
+                                    "x": 900,
+                                    "y": -180,
+                                    "name": "Update Status Approved"
+                                }
+                            }
+                        },
+                        {
+                            "id": 5,
+                            "module": "google-calendar:createAnEvent",
+                            "version": 5,
+                            "parameters": {
+                                "__IMTCONN__": 0
+                            },
+                            "mapper": {
+                                "calendar": "<YOUR_EMAIL@example.com>",
+                                "summary": "นัดคุย Demo B2B - คุณ {{2.`2`}} ({{2.`3`}})",
+                                "start": "{{ifempty(parseDate(2.`8`; \"YYYY-MM-DD HH:mm\"); addDays(now; 1))}}",
+                                "end": "{{addHours(ifempty(parseDate(2.`8`; \"YYYY-MM-DD HH:mm\"); addDays(now; 1)); 1)}}",
+                                "description": "บริการ: {{2.`4`}}\nงบประมาณ: {{2.`5`}}\nราคาประเมิน: {{2.`6`}} บาท\nใบเสนอราคา PDF: {{2.`9`}}"
+                            },
+                            "metadata": {
+                                "designer": {
+                                    "x": 1200,
+                                    "y": -180,
+                                    "name": "Book Demo on Calendar"
+                                }
+                            },
+                            "onerror": [
+                                {
+                                    "id": 12,
+                                    "module": "builtin:Resume",
+                                    "version": 1,
+                                    "parameters": {},
+                                    "mapper": {},
+                                    "metadata": {
+                                        "designer": {
+                                            "x": 1200,
+                                            "y": 40,
+                                            "name": "Resume if No Demo Date"
+                                        }
+                                    }
+                                }
+                            ]
+                        },
+                        {
+                            "id": 6,
+                            "module": "line:sendPushMessages",
+                            "version": 1,
+                            "parameters": {
+                                "__IMTCONN__": 0
+                            },
+                            "mapper": {
+                                "to": "{{2.`1`}}",
+                                "messages": [
+                                    {
+                                        "type": "text",
+                                        "text": "เรียนคุณ {{2.`2`}} ({{2.`3`}})\n\nใบเสนอราคาสำหรับบริการ {{2.`4`}} ผ่านการตรวจสอบจากทีมงาน NexaDigital เรียบร้อยแล้วครับ\n\n📄 ดาวน์โหลดใบเสนอราคา (PDF):\n{{2.`9`}}\n\n📅 นัดหมายคุยรายละเอียด (Demo): {{ifempty(2.`8`; \"แจ้งวันเวลาที่สะดวกกลับมาได้เลยครับ\")}}\n\nหากมีคำถามเพิ่มเติมสามารถพิมพ์สอบถามในแชทนี้ได้ทันทีครับ"
+                                    }
+                                ]
+                            },
+                            "metadata": {
+                                "designer": {
+                                    "x": 1500,
+                                    "y": -180,
+                                    "name": "Send PDF to Customer LINE"
+                                }
+                            }
+                        },
+                        {
+                            "id": 7,
+                            "module": "gateway:WebhookRespond",
+                            "version": 1,
+                            "parameters": {},
+                            "mapper": {
+                                "status": "200",
+                                "body": "<!DOCTYPE html><html lang=\"th\"><body style=\"font-family:sans-serif;text-align:center;padding:60px;background:#f0fdf4;\"><h1 style=\"color:#16a34a;\">✅ อนุมัติและส่งใบเสนอราคาเรียบร้อยแล้ว!</h1><p>ระบบได้อัปเดต Google Sheets, ลงนัดใน Google Calendar และส่งลิงก์ PDF เข้า LINE ลูกค้าเรียบร้อยครับ</p></body></html>",
+                                "headers": [
+                                    {
+                                        "key": "Content-Type",
+                                        "value": "text/html; charset=utf-8"
+                                    }
+                                ]
+                            },
+                            "metadata": {
+                                "designer": {
+                                    "x": 1800,
+                                    "y": -180,
+                                    "name": "Show Approved Page"
+                                }
+                            }
+                        }
+                    ]
+                },
+                {
+                    "flow": [
+                        {
+                            "id": 8,
+                            "module": "google-sheets:updateRow",
+                            "version": 2,
+                            "parameters": {
+                                "__IMTCONN__": 0
+                            },
+                            "filter": {
+                                "name": "Rejected",
+                                "conditions": [
+                                    [
+                                        {
+                                            "a": "{{1.action}}",
+                                            "o": "text:equal",
+                                            "b": "reject"
+                                        }
+                                    ]
+                                ]
+                            },
+                            "mapper": {
+                                "mode": "map",
+                                "spreadsheetId": "<YOUR_SPREADSHEET_ID>",
+                                "sheetId": "Leads_Quotations",
+                                "rowNumber": "{{1.row}}",
+                                "tableFirstRow": "A1:Z1",
+                                "valueInputOption": "USER_ENTERED",
+                                "values": {
+                                    "10": "Needs Revision"
+                                }
+                            },
+                            "metadata": {
+                                "designer": {
+                                    "x": 900,
+                                    "y": 180,
+                                    "name": "Update Status Rejected"
+                                }
+                            }
+                        },
+                        {
+                            "id": 9,
+                            "module": "gateway:WebhookRespond",
+                            "version": 1,
+                            "parameters": {},
+                            "mapper": {
+                                "status": "200",
+                                "body": "<!DOCTYPE html><html lang=\"th\"><body style=\"font-family:sans-serif;text-align:center;padding:60px;background:#fef2f2;\"><h1 style=\"color:#dc2626;\">❌ บันทึกสถานะ \"ต้องแก้ไข\" เรียบร้อยแล้ว</h1><p>ระบบไม่ได้ส่งใบเสนอราคาหาลูกค้า กรุณาเข้าไปแก้ไขเอกสารและติดต่อกลับด้วยตนเองครับ</p></body></html>",
+                                "headers": [
+                                    {
+                                        "key": "Content-Type",
+                                        "value": "text/html; charset=utf-8"
+                                    }
+                                ]
+                            },
+                            "metadata": {
+                                "designer": {
+                                    "x": 1200,
+                                    "y": 180,
+                                    "name": "Show Rejected Page"
+                                }
+                            }
+                        }
+                    ]
+                }
+            ]
+        }
+    ],
+    "metadata": {
+        "instant": true,
+        "version": 1,
+        "scenario": {
+            "roundtrips": 1,
+            "maxErrors": 3,
+            "autoCommit": true,
+            "autoCommitTriggerLast": true,
+            "sequential": false,
+            "slots": null,
+            "confidential": false,
+            "dataloss": false,
+            "dlq": false,
+            "freshVariables": false
+        },
+        "designer": {
+            "orphans": []
+        },
+        "zone": "eu1.make.com",
+        "notes": []
+    }
+}

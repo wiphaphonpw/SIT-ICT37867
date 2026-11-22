@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <title>ใบเสนอราคา - NexaDigital Agency</title>
+</head>
+<body style="font-family: 'Sarabun', Arial, sans-serif; color: #222; max-width: 780px; margin: 0 auto; padding: 24px; line-height: 1.6;">
+
+  <table style="width: 100%; border-bottom: 3px solid #2563EB; padding-bottom: 12px; margin-bottom: 20px;">
+    <tr>
+      <td style="vertical-align: top;">
+        <h1 style="margin: 0; color: #1E3A8A; font-size: 24px;">บริษัท เน็กซ่า ดิจิทัล เอเจนซี่ จำกัด</h1>
+        <p style="margin: 4px 0 0 0; font-size: 13px; color: #555;">
+          NexaDigital Agency Co., Ltd.<br>
+          123 อาคารดิจิทัลทาวเวอร์ ชั้น 12 ถนนสุขุมวิท กรุงเทพฯ 10110<br>
+          โทร: 02-123-4567 | อีเมล: sales@nexadigital.example.com
+        </p>
+      </td>
+      <td style="text-align: right; vertical-align: top;">
+        <h2 style="margin: 0; color: #2563EB; font-size: 26px;">ใบเสนอราคา</h2>
+        <p style="margin: 2px 0 0 0; font-size: 14px; font-weight: bold; color: #555;">QUOTATION</p>
+      </td>
+    </tr>
+  </table>
+
+  <table style="width: 100%; margin-bottom: 20px; font-size: 14px;">
+    <tr>
+      <td style="width: 55%; vertical-align: top;">
+        <strong>เรียน (Client):</strong> คุณ {{client_name}}<br>
+        <strong>บริษัท (Company):</strong> {{company}}<br>
+        <strong>งบประมาณเบื้องต้น:</strong> {{budget}}
+      </td>
+      <td style="width: 45%; vertical-align: top; text-align: right;">
+        <strong>เลขที่เอกสาร:</strong> {{quote_no}}<br>
+        <strong>วันที่ออกเอกสาร:</strong> {{date}}<br>
+        <strong>ยืนราคาถึงวันที่:</strong> {{valid_until}}
+      </td>
+    </tr>
+  </table>
+
+  <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px; font-size: 14px;">
+    <thead>
+      <tr style="background-color: #1E3A8A; color: #FFFFFF;">
+        <th style="border: 1px solid #CBD5E1; padding: 10px; text-align: center; width: 8%;">ลำดับ</th>
+        <th style="border: 1px solid #CBD5E1; padding: 10px; text-align: left; width: 67%;">รายการบริการและขอบเขตงาน (Description)</th>
+        <th style="border: 1px solid #CBD5E1; padding: 10px; text-align: right; width: 25%;">จำนวนเงิน (บาท)</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td style="border: 1px solid #CBD5E1; padding: 12px; text-align: center; vertical-align: top;">1</td>
+        <td style="border: 1px solid #CBD5E1; padding: 12px; vertical-align: top;">
+          <strong>{{service}}</strong><br>
+          <span style="color: #475569;">ขอบเขตงานเบื้องต้น: {{scope}}</span>
+        </td>
+        <td style="border: 1px solid #CBD5E1; padding: 12px; text-align: right; vertical-align: top;">{{estimated_price}}</td>
+      </tr>
+      <tr style="background-color: #F8FAFC;">
+        <td colspan="2" style="border: 1px solid #CBD5E1; padding: 10px; text-align: right;"><strong>รวมราคาประเมินเบื้องต้น (ยังไม่รวม VAT 7%)</strong></td>
+        <td style="border: 1px solid #CBD5E1; padding: 10px; text-align: right;"><strong>{{estimated_price}} บาท</strong></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div style="background-color: #F1F5F9; padding: 14px; border-radius: 6px; font-size: 13px; margin-bottom: 28px;">
+    <strong>เงื่อนไขและหมายเหตุ:</strong>
+    <ul style="margin: 6px 0 0 18px; padding: 0;">
+      <li>ราคานี้เป็นการประเมินเบื้องต้นตามขอบเขตงานที่ได้รับ และผ่านการตรวจสอบอนุมัติโดยทีมขาย NexaDigital Agency</li>
+      <li>รับประกันแก้ไขข้อผิดพลาด (Bug Warranty) ฟรี 90 วันหลังส่งมอบงาน</li>
+      <li>การชำระเงิน: มัดจำ 50% ก่อนเริ่มงาน และชำระส่วนที่เหลือ 50% หลังส่งมอบงาน (เครดิตเทอม 30 วัน)</li>
+    </ul>
+  </div>
+
+  <table style="width: 100%; font-size: 14px; margin-top: 32px;">
+    <tr>
+      <td style="width: 50%; text-align: center;">
+        <p>ลงชื่อ ___________________________</p>
+        <p>( คุณ {{client_name}} )<br>ผู้อนุมัติสั่งจ้าง</p>
+      </td>
+      <td style="width: 50%; text-align: center;">
+        <p>ลงชื่อ ___________________________</p>
+        <p>( ฝ่ายขาย NexaDigital Agency )<br>ผู้เสนอราคา</p>
+      </td>
+    </tr>
+  </table>
+
+</body>
+</html>
